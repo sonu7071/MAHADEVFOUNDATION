@@ -221,6 +221,14 @@ padding:15px;
 border-radius:12px;
 }
 
+#yatra{
+background:black;
+color:white;
+margin:20px;
+padding:15px;
+border-radius:12px;
+}
+
 #map{
 height:420px;
 width:100%;
