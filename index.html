@@ -2,11 +2,9 @@
 <html lang="hi">
 
 <head>
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <title>Mahadev Foundation</title>
 
 <link rel="stylesheet" href="style.css">
@@ -49,7 +47,7 @@
 
 <img src="2NDIMAGEFORHOMEPAGE.png" class="poster">
 
-<div class="donate-message">
+<div class="donate-mes  sage">
 
 आपका एक छोटा सा दान, किसी भूखे का पूरा दिन बना सकता है।
 
@@ -60,10 +58,21 @@
 <button class="donate-btn">
 
 🙏 Donate Now
-
+  
 </button>
 
 </a>
+  <div id="yatra">
+
+<h2>🚴 ज्योतिर्लिंग साइकिल यात्रा</h2>
+
+<div id="map"></div>
+
+<div class="distance">
+यात्रा दूरी: <span id="km">0</span> / 1800 KM
+</div>
+
+</div>
 
 <section class="about">
 
@@ -115,74 +124,60 @@
 </a>
 <script>
 
-mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN';
+var map = L.map('map').setView([22.5,78],5);
 
-const map = new mapboxgl.Map({
-container: 'map',
-style: 'mapbox://styles/mapbox/dark-v11',
-center: [78,22],
-zoom:4,
-pitch:60,
-bearing:-20
-});
+L.tileLayer(
+'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+{maxZoom:19}
+).addTo(map);
 
-const route=[
-[85.3647,26.1209], // Muzaffarpur
-[86.6990,24.4922], // Baidyanath
-[77.4126,23.2599], // Bhopal route
-[75.1797,20.0268], // Grishneshwar
-[75.7681,23.1824]  // Ujjain
+var route=[
+
+[26.1209,85.3647], // Muzaffarpur
+
+[24.4922,86.6990], // Baidyanath
+
+[23.2599,77.4126], // Bhopal
+
+[20.0268,75.1797], // Grishneshwar
+
+[23.1824,75.7681]  // Ujjain
+
 ];
 
-map.on('load',()=>{
+var polyline=L.polyline(route,{
+color:'#ff3333',
+weight:5
+}).addTo(map);
 
-map.addSource('route',{
-'type':'geojson',
-'data':{
-'type':'Feature',
-'geometry':{
-'type':'LineString',
-'coordinates':route
-}
-}
+map.fitBounds(polyline.getBounds());
+
+var bikeIcon=L.icon({
+iconUrl:"https://cdn-icons-png.flaticon.com/512/2972/2972185.png",
+iconSize:[45,45]
 });
 
-map.addLayer({
-'id':'route',
-'type':'line',
-'source':'route',
-'layout':{'line-cap':'round','line-join':'round'},
-'paint':{
-'line-color':'#ff3333',
-'line-width':4
-}
-});
+var bike=L.marker(route[0],{icon:bikeIcon}).addTo(map);
 
-});
+var step=0;
 
-let i=0;
+function moveBike(){
 
-function fly(){
+bike.setLatLng(route[step]);
 
-map.flyTo({
-center:route[i],
-zoom:6,
-speed:0.6
-});
+step++;
 
-i++;
-
-if(i>=route.length){
-i=0;
+if(step>=route.length){
+step=0;
 }
 
-setTimeout(fly,3000);
+setTimeout(moveBike,2500);
 
 }
 
-fly();
+moveBike();
 
-let km=0;
+var km=0;
 
 setInterval(()=>{
 if(km<1800){
@@ -192,5 +187,7 @@ document.getElementById("km").innerText=km;
 },60);
 
 </script>
+
+
 </body>
 </html>
